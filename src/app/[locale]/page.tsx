@@ -3,6 +3,7 @@ import FormInput from "@/components/control/input/FormInput";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+
 import { permutationWord } from "@/utils";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -17,6 +18,7 @@ type Schema = z.infer<typeof schema>;
 
 export default function Page() {
   const [result, setResult] = useState<string[]>();
+  const [loading, setLoading] = useState<boolean>(false);
   const forms = useForm<Schema>({
     defaultValues: {
       keyword: "",
@@ -25,11 +27,14 @@ export default function Page() {
 
   const t = useTranslations("Home");
 
-  const onSubmit = (values: Schema) => {
+  const onSubmit = async (values: Schema) => {
+    setLoading(true);
     const words = values.keyword.trim().split(" ");
     if (!words.length) return;
-
-    setResult(permutationWord(words).validWords);
+    permutationWord(words).then(({ validWords }) => {
+      setResult(validWords);
+      setLoading(false);
+    });
   };
 
   return (
@@ -48,7 +53,7 @@ export default function Page() {
                     }}
                     styles={{ itemClass: "w-full" }}
                   />
-                  <Button className="w-fit" type="submit">
+                  <Button disabled={loading} className="w-fit" type="submit">
                     {t("search")}
                   </Button>
                 </div>

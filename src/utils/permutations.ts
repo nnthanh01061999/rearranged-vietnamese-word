@@ -10,15 +10,29 @@ type WordStruct = {
   tonePosition: number;
 };
 
-export const permutationWord = (words: string[]) => {
+type WorkStructSet = {
+  initialConsonants: string[];
+  vowels: string[];
+  finalConsonants: string[];
+  tones: string[];
+  tonePositions: number[];
+};
+
+const initStructSet: WorkStructSet = {
+  initialConsonants: [],
+  vowels: [],
+  finalConsonants: [],
+  tones: [],
+  tonePositions: [],
+};
+
+export const permutationWord = async (words: string[]) => {
   const destructWords = words.map((word) => destructWord(word));
   const generates = generateAllCase(destructWords);
   const newWords = generates.map((word) => structWord(word));
   const uniqueNewWords = arrayUnique(newWords) as string[];
   const similarUniqueWords = getSimilarUniqueWord(uniqueNewWords);
-  const validSpells = similarUniqueWords.filter((word) => {
-    return vi?.[word as keyof typeof vi];
-  });
+  const validSpells = checkVietnameseSpell(similarUniqueWords);
   const completeWords = shuffleWordToCompleteWord(validSpells, words.length);
   return {
     validWords: checkValidStruct(words.join(", "), destructWords, completeWords),
@@ -60,87 +74,71 @@ export function destructWord(word: string) {
   return result;
 }
 
-export const getAllDestructWordSimilar = (destructWord: WordStruct[]) => {
-  const destructWordSimilarAll = destructWord.reduce(
-    (prev, cur) => {
-      const similarInitialConsonants = [cur.initialConsonant, ...(initialConsonantSimilarMap[cur.initialConsonant] ? initialConsonantSimilarMap[cur.initialConsonant] : [])];
-      const similarVowels = [cur.vowel, ...(vowelSimilarMap[cur.vowel] ? vowelSimilarMap[cur.vowel] : [])];
-      const similarFinalConsonants = [cur.finalConsonant, ...(finalConsonantSimilarMap[cur.finalConsonant] ? finalConsonantSimilarMap[cur.finalConsonant] : [])];
-      const tone = cur.tone;
-      const tonePosition = cur.tonePosition;
-
-      return {
-        similarInitialConsonants: [...prev.similarInitialConsonants, ...similarInitialConsonants],
-        similarVowels: [...prev.similarVowels, ...similarVowels],
-        similarFinalConsonants: [...prev.similarFinalConsonants, ...similarFinalConsonants],
-        tones: [...prev.tones, tone],
-        tonePositions: [...prev.tonePositions, tonePosition],
-      };
-    },
-    {
-      similarInitialConsonants: [],
-      similarVowels: [],
-      similarFinalConsonants: [],
-      tones: [],
-      tonePositions: [],
-    } as {
-      similarInitialConsonants: string[];
-      similarVowels: string[];
-      similarFinalConsonants: string[];
-      tones: string[];
-      tonePositions: number[];
-    },
-  );
-  const allCase: WordStruct[] = [];
-
-  const similarInitialConsonants = arrayUnique(destructWordSimilarAll.similarInitialConsonants) as string[];
-  const similarVowels = arrayUnique(destructWordSimilarAll.similarVowels) as string[];
-  const similarFinalConsonants = arrayUnique(destructWordSimilarAll.similarFinalConsonants) as string[];
-  const tones = arrayUnique(destructWordSimilarAll.tones) as string[];
-  const tonePositions = arrayUnique(destructWordSimilarAll.tonePositions) as number[];
-
-  similarInitialConsonants?.forEach((initialConsonant) => {
-    similarVowels?.forEach((vowel) => {
-      similarFinalConsonants?.forEach((finalConsonant) => {
-        tones.forEach((tone) => {
-          tonePositions.forEach((tonePosition) => {
-            allCase.push({ initialConsonant, vowel, finalConsonant, tone, tonePosition });
-          });
-        });
-      });
-    });
-  });
-  return allCase;
-};
-
-export const generateAllCase = (input: WordStruct[]) => {
-  const initialConsonants: string[] = [];
-  const vowels: string[] = [];
-  const finalConsonants: string[] = [];
-  const tones: string[] = [];
-  const tonePositions: number[] = [];
-  input.forEach((item) => {
-    initialConsonants.push(item.initialConsonant);
-    vowels.push(item.vowel);
-    finalConsonants.push(item.finalConsonant);
-    tones.push(item.tone);
-    tonePositions.push(item.tonePosition);
-  });
-
+const generateCasesFromSets = ({
+  finalConsonants,
+  initialConsonants,
+  vowels,
+  tonePositions,
+  tones,
+}: {
+  initialConsonants: string[];
+  vowels: string[];
+  finalConsonants: string[];
+  tones: string[];
+  tonePositions: number[];
+}) => {
   const result: WordStruct[] = [];
 
-  initialConsonants.forEach((initialConsonant) => {
-    vowels.forEach((vowel) => {
-      tones.forEach((tone) => {
-        tonePositions.forEach((tonePosition) => {
-          finalConsonants.forEach((finalConsonant) => {
+  const uniqueInitialConsonants = arrayUnique(initialConsonants) as string[];
+  const uniqueVowels = arrayUnique(vowels) as string[];
+  const uniqueFinalConsonants = arrayUnique(finalConsonants) as string[];
+  const uniqueTones = arrayUnique(tones) as string[];
+  const uniqueTonePositions = arrayUnique(tonePositions) as number[];
+
+  uniqueInitialConsonants.forEach((initialConsonant) => {
+    uniqueVowels.forEach((vowel) => {
+      uniqueFinalConsonants.forEach((finalConsonant) => {
+        uniqueTones.forEach((tone) => {
+          uniqueTonePositions.forEach((tonePosition) => {
             result.push({ initialConsonant, vowel, finalConsonant, tone, tonePosition });
           });
         });
       });
     });
   });
+
   return result;
+};
+
+export const getAllDestructWordSimilar = (destructWord: WordStruct[]) => {
+  const destructWordSimilar = destructWord.reduce((prev, cur) => {
+    const initialConsonants = initialConsonantSimilarMap[cur.initialConsonant] || [];
+    const vowels = vowelSimilarMap[cur.vowel] || [];
+    const finalConsonants = finalConsonantSimilarMap[cur.finalConsonant] || [];
+
+    return {
+      initialConsonants: [...prev.initialConsonants, cur.initialConsonant, ...initialConsonants],
+      vowels: [...prev.vowels, cur.vowel, ...vowels],
+      finalConsonants: [...prev.finalConsonants, cur.finalConsonant, ...finalConsonants],
+      tones: [...prev.tones, cur.tone],
+      tonePositions: [...prev.tonePositions, cur.tonePosition],
+    };
+  }, initStructSet);
+  return generateCasesFromSets(destructWordSimilar);
+};
+
+export const generateAllCase = (input: WordStruct[]) => {
+  const structSet = input.reduce((prev, cur) => {
+    return {
+      initialConsonants: [...prev.initialConsonants, cur.initialConsonant],
+      vowels: [...prev.vowels, cur.vowel],
+      finalConsonants: [...prev.finalConsonants, cur.finalConsonant],
+      tones: [...prev.tones, cur.tone],
+      tonePositions: [...prev.tonePositions, cur.tonePosition],
+    };
+  }, initStructSet);
+
+  return generateCasesFromSets(structSet);
 };
 
 export const structWord = (input: WordStruct) => {
@@ -162,10 +160,7 @@ export function getCombinations(arr: string[], n: number): string[][] {
 }
 
 export const shuffleWordToCompleteWord = (word: string[], pick: number): string[] => {
-  // Get all combinations of the specified length
   const combinations = getCombinations(word, pick);
-
-  // Convert combinations into complete words
   return combinations.map((combination) => combination.join(" "));
 };
 
@@ -188,14 +183,11 @@ export const getMapFromStruct = (wordStruct: WordStruct[]) => {
 
 type AnyObject = { [key: string]: any };
 
-// Helper export function to sort an object’s keys and values
 export const sortObject = (obj: AnyObject): AnyObject => {
   if (typeof obj !== "object" || obj === null) return obj;
 
-  // Sort arrays by their elements
   if (Array.isArray(obj)) return obj.map(sortObject).sort();
 
-  // Sort object keys
   return Object.keys(obj)
     .sort()
     .reduce((sortedObj, key) => {
@@ -212,7 +204,6 @@ export const getSimilarUniqueWord = (words: string[]): string[] => {
   return uniqueNewWords;
 };
 
-//update this check for valid word and similar word
 export const checkValidStruct = (originalWord: string, validWordStruct: WordStruct[], words: string[]) => {
   const similarWordStruct = getAllDestructWordSimilar(validWordStruct);
   const validMap = getMapFromStruct(similarWordStruct);
@@ -224,13 +215,14 @@ export const checkValidStruct = (originalWord: string, validWordStruct: WordStru
     const values = word?.split(" ");
 
     const originalWords = originalWord.split(" ");
+    const originalLength = originalWords.length;
     const firstOriginalWord = originalWords[0];
     const lastOriginalWord = originalWords[originalWords.length - 1];
     const firstWord = values[0];
     const lastWord = values[values.length - 1];
 
-    if (firstOriginalWord === firstWord || firstOriginalWord.includes(firstWord) || firstWord.includes(firstOriginalWord)) return false;
-    if (lastOriginalWord === lastWord || lastOriginalWord.includes(lastWord) || lastWord.includes(lastOriginalWord)) return false;
+    if ((originalLength <= 2 && firstOriginalWord === firstWord) || firstOriginalWord.includes(firstWord) || firstWord.includes(firstOriginalWord)) return false;
+    if ((originalLength <= 2 && lastOriginalWord === lastWord) || lastOriginalWord.includes(lastWord) || lastWord.includes(lastOriginalWord)) return false;
 
     const destructWords = values?.map((value) => destructWord(value));
     const destructWordSimilar = getAllDestructWordSimilar(destructWords);
@@ -241,7 +233,7 @@ export const checkValidStruct = (originalWord: string, validWordStruct: WordStru
 
 export const checkVietnameseSpell = (words: string[]) => {
   return words.filter((word) => {
-    return vi?.[word as keyof typeof vi];
+    return vi?.[word.toLocaleLowerCase() as keyof typeof vi];
   });
 };
 
@@ -282,8 +274,6 @@ export const initialConsonantSimilarMap = {
   n: ["n"],
   p: ["b"],
   b: ["p"],
-  t: ["th"],
-  th: ["t"],
   v: ["v"],
   x: ["s"],
   s: ["x"],
@@ -300,8 +290,6 @@ export const vowelSimilarMap = {
   i: ["y"],
   y: ["i"],
   uy: ["i"],
-
-  // Composite vowels with chạy âm
   ai: ["ay", "âi"],
   ay: ["ai", "ây"],
   ây: ["ai", "ay"],
