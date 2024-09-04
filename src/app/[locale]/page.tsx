@@ -3,10 +3,12 @@ import FormInput from "@/components/control/input/FormInput";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { useQueryString } from "@/hooks/use-query-string";
 
 import { permutationWord } from "@/utils";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -17,25 +19,34 @@ const schema = z.object({
 type Schema = z.infer<typeof schema>;
 
 export default function Page() {
+  const { filter, searchParams } = useQueryString();
+
   const [result, setResult] = useState<string[]>();
   const [loading, setLoading] = useState<boolean>(false);
   const forms = useForm<Schema>({
     defaultValues: {
-      keyword: "",
+      keyword: searchParams.get("keyword") || "",
     },
   });
 
   const t = useTranslations("Home");
 
   const onSubmit = async (values: Schema) => {
-    setLoading(true);
-    const words = values.keyword.trim().split(" ");
-    if (!words.length) return;
-    permutationWord(words).then(({ validWords }) => {
-      setResult(validWords);
-      setLoading(false);
-    });
+    filter({ keyword: values.keyword });
   };
+
+  useEffect(() => {
+    const keyword = searchParams.get("keyword");
+    if (!!keyword) {
+      setLoading(true);
+      const words = keyword.trim().split(" ");
+      if (!words.length) return;
+      permutationWord(words).then(({ validWords }) => {
+        setResult(validWords);
+        setLoading(false);
+      });
+    }
+  }, [searchParams]);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start overflow-auto p-4 md:p-24">
