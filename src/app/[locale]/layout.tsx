@@ -8,6 +8,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { Inter as FontSans } from "next/font/google";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import "./tree.css";
 
@@ -80,6 +81,7 @@ export default async function RootLayout({ children, params: { locale } }: { chi
           <ClientProvider>
             <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
               {children}
+              <Analytics />
             </NextIntlClientProvider>
           </ClientProvider>
         </HydrationProvider>
