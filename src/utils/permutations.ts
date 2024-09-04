@@ -20,7 +20,10 @@ export const permutationWord = (words: string[]) => {
     return vi?.[word as keyof typeof vi];
   });
   const completeWords = shuffleWordToCompleteWord(validSpells, words.length);
-  return checkValidStruct(destructWords, completeWords);
+  return {
+    validWords: checkValidStruct(words.join(", "), destructWords, completeWords),
+    completeWords,
+  };
 };
 
 export function destructWord(word: string) {
@@ -58,24 +61,56 @@ export function destructWord(word: string) {
 }
 
 export const getAllDestructWordSimilar = (destructWord: WordStruct[]) => {
-  return destructWord.reduce((prev, cur) => {
-    const similarInitialConsonants = initialConsonantSimilarMap[cur.initialConsonant];
-    const similarVowels = vowelSimilarMap[cur.vowel];
-    const similarFinalConsonants = finalConsonantSimilarMap[cur.finalConsonant];
+  const destructWordSimilarAll = destructWord.reduce(
+    (prev, cur) => {
+      const similarInitialConsonants = [cur.initialConsonant, ...(initialConsonantSimilarMap[cur.initialConsonant] ? initialConsonantSimilarMap[cur.initialConsonant] : [])];
+      const similarVowels = [cur.vowel, ...(vowelSimilarMap[cur.vowel] ? vowelSimilarMap[cur.vowel] : [])];
+      const similarFinalConsonants = [cur.finalConsonant, ...(finalConsonantSimilarMap[cur.finalConsonant] ? finalConsonantSimilarMap[cur.finalConsonant] : [])];
+      const tone = cur.tone;
+      const tonePosition = cur.tonePosition;
 
-    const allCase: WordStruct[] = [];
+      return {
+        similarInitialConsonants: [...prev.similarInitialConsonants, ...similarInitialConsonants],
+        similarVowels: [...prev.similarVowels, ...similarVowels],
+        similarFinalConsonants: [...prev.similarFinalConsonants, ...similarFinalConsonants],
+        tones: [...prev.tones, tone],
+        tonePositions: [...prev.tonePositions, tonePosition],
+      };
+    },
+    {
+      similarInitialConsonants: [],
+      similarVowels: [],
+      similarFinalConsonants: [],
+      tones: [],
+      tonePositions: [],
+    } as {
+      similarInitialConsonants: string[];
+      similarVowels: string[];
+      similarFinalConsonants: string[];
+      tones: string[];
+      tonePositions: number[];
+    },
+  );
+  const allCase: WordStruct[] = [];
 
-    similarInitialConsonants?.forEach((initialConsonant) => {
-      allCase.push({ ...cur, initialConsonant });
-      similarVowels?.forEach((vowel) => {
-        allCase.push({ ...cur, initialConsonant, vowel });
-        similarFinalConsonants?.forEach((finalConsonant) => {
-          allCase.push({ ...cur, initialConsonant, vowel, finalConsonant });
+  const similarInitialConsonants = arrayUnique(destructWordSimilarAll.similarInitialConsonants) as string[];
+  const similarVowels = arrayUnique(destructWordSimilarAll.similarVowels) as string[];
+  const similarFinalConsonants = arrayUnique(destructWordSimilarAll.similarFinalConsonants) as string[];
+  const tones = arrayUnique(destructWordSimilarAll.tones) as string[];
+  const tonePositions = arrayUnique(destructWordSimilarAll.tonePositions) as number[];
+
+  similarInitialConsonants?.forEach((initialConsonant) => {
+    similarVowels?.forEach((vowel) => {
+      similarFinalConsonants?.forEach((finalConsonant) => {
+        tones.forEach((tone) => {
+          tonePositions.forEach((tonePosition) => {
+            allCase.push({ initialConsonant, vowel, finalConsonant, tone, tonePosition });
+          });
         });
       });
     });
-    return [...prev, cur, ...allCase];
-  }, [] as WordStruct[]);
+  });
+  return allCase;
 };
 
 export const generateAllCase = (input: WordStruct[]) => {
@@ -174,20 +209,29 @@ export const getSimilarUniqueWord = (words: string[]): string[] => {
   const similarWordStruct = getAllDestructWordSimilar(destructWords);
   const newWords = similarWordStruct.map((word) => structWord(word));
   const uniqueNewWords = arrayUnique(newWords) as string[];
-  const validSpells = uniqueNewWords.filter((word) => {
-    return vi?.[word as keyof typeof vi];
-  });
-  return validSpells;
+  return uniqueNewWords;
 };
 
 //update this check for valid word and similar word
-export const checkValidStruct = (validWordStruct: WordStruct[], words: string[]) => {
+export const checkValidStruct = (originalWord: string, validWordStruct: WordStruct[], words: string[]) => {
   const similarWordStruct = getAllDestructWordSimilar(validWordStruct);
   const validMap = getMapFromStruct(similarWordStruct);
   const validMapJson = JSON.stringify(sortObject(validMap));
 
   return words.filter((word) => {
+    if (word === originalWord) return false;
+
     const values = word?.split(" ");
+
+    const originalWords = originalWord.split(" ");
+    const firstOriginalWord = originalWords[0];
+    const lastOriginalWord = originalWords[originalWords.length - 1];
+    const firstWord = values[0];
+    const lastWord = values[values.length - 1];
+
+    if (firstOriginalWord === firstWord || firstOriginalWord.includes(firstWord) || firstWord.includes(firstOriginalWord)) return false;
+    if (lastOriginalWord === lastWord || lastOriginalWord.includes(lastWord) || lastWord.includes(lastOriginalWord)) return false;
+
     const destructWords = values?.map((value) => destructWord(value));
     const destructWordSimilar = getAllDestructWordSimilar(destructWords);
     const checkMap = getMapFromStruct(destructWordSimilar);
@@ -249,35 +293,48 @@ export const initialConsonantSimilarMap = {
 } as Record<string, string[]>;
 
 export const vowelSimilarMap = {
-  a: ["â"],
-  â: ["a"],
-  ă: ["a", "â"],
   e: ["ê"],
   ê: ["e"],
-  i: ["i", "uy", "y"],
-  // o: ["ô", "ơ"],
-  // ô: ["o", "ơ"],
-  // ơ: ["o", "ô"],
   u: ["ư"],
   ư: ["u"],
-  y: ["y", "i", "uy"],
-  ai: ["ay", "ai", "ây"],
-  ao: ["au", "ao"],
+  i: ["y"],
+  y: ["i"],
+  uy: ["i"],
+
+  // Composite vowels with chạy âm
+  ai: ["ay", "âi"],
+  ay: ["ai", "ây"],
+  ây: ["ai", "ay"],
+  ao: ["au", "âu"],
   au: ["ao", "âu"],
-  eo: ["êu", "eo"],
-  ia: ["iê", "ia"],
+  âu: ["ao", "au"],
+  eo: ["êu"],
+  êu: ["iêu", "iu", "yêu"],
+  iêu: ["êu", "yêu", "iu"],
+  yêu: ["iêu", "iu", "êu"],
+  iu: ["iêu", "yêu", "êu"],
+  ia: ["iê", "yê"],
   iê: ["ia", "yê"],
-  oi: ["ôi", "oi"],
-  ôi: ["oi", "ôi"],
-  ưa: ["ươ", "ua"],
-  ươi: ["uôi", "ươi"],
-  yê: ["iê", "yê"],
-  oai: ["oay", "oai"],
+  ua: ["uô", "ưa"],
+  uô: ["ua", "ươ"],
+  ưa: ["ua", "ươ"],
+  ươ: ["uô", "ưa"],
+  ươi: ["uôi", "ươu"],
+  uôi: ["ươi", "ươu"],
+  oai: ["oay", "oao"],
+  oay: ["oai", "oao"],
+  oao: ["oai", "oay"],
+  in: ["inh"],
+  inh: ["in"],
+  an: ["ang", "ân"],
+  ang: ["an", "âng"],
+  ươu: ["ươi", "uôi"],
 } as Record<string, string[]>;
 
 export const finalConsonantSimilarMap = {
-  c: ["t"],
-  t: ["c"],
+  c: ["t", "ch"],
+  t: ["c", "ch"],
+  b: ["p", "m"],
   p: ["b", "m"],
   m: ["p", "b"],
   n: ["ng", "nh"],
