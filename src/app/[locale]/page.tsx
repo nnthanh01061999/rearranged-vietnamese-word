@@ -3,13 +3,11 @@ import FormInput from "@/components/control/input/FormInput";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { arrayUnique, checkValidStruct, destructWord, generateAllCase, getSimilarUniqueWord, permutationWord, shuffleWordToCompleteWord, structWord } from "@/utils";
+import { permutationWord } from "@/utils";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import ReactJson from "react-json-view";
 import { z } from "zod";
-import vi from "@/data/vi.dic.json";
 
 const schema = z.object({
   keyword: z.string().min(1, "Required"),
@@ -19,7 +17,6 @@ type Schema = z.infer<typeof schema>;
 
 export default function Page() {
   const [result, setResult] = useState<string[]>();
-  const [debug, setDebug] = useState<any>();
   const forms = useForm<Schema>({
     defaultValues: {
       keyword: "",
@@ -31,23 +28,8 @@ export default function Page() {
   const onSubmit = (values: Schema) => {
     const words = values.keyword.trim().split(" ");
     if (!words.length) return;
-    const destructWords = words.map((word) => destructWord(word));
-    const generates = generateAllCase(destructWords);
-    const newWords = generates.map((word) => structWord(word));
-    const uniqueNewWords = arrayUnique(newWords) as string[];
-    const similarUniqueWords = getSimilarUniqueWord(uniqueNewWords);
-    const validSpells = similarUniqueWords.filter((word) => {
-      return vi?.[word as keyof typeof vi];
-    });
-    const completeWords = shuffleWordToCompleteWord(validSpells, words.length);
 
-    setResult(checkValidStruct(words.join(" "), destructWords, completeWords));
-
-    setDebug({
-      destructWords,
-      validSpells,
-      completeWords,
-    });
+    setResult(permutationWord(words).validWords);
   };
 
   return (
@@ -81,7 +63,6 @@ export default function Page() {
                     </Label>
                   </div>
                 ))}
-                <ReactJson src={debug} />
               </CardContent>
             </Card>
           </form>
