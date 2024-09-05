@@ -1,7 +1,6 @@
 {
   "Common": {
     "title": "Tra từ đảo",
-
     "bread": {
       "not-found": "Không tìm thấy"
     },
@@ -27,7 +26,6 @@
     "pagination": {
       "show-total": "Tổng: {total}"
     },
-
     "form": {
       "add": "Thêm mới",
       "remove": "Xóa",
@@ -87,7 +85,6 @@
         "add": "Thêm"
       }
     },
-
     "modal": {
       "create": "Tạo {data}",
       "update": "Cập nhật {data}",
@@ -132,7 +129,6 @@
       "inputURL": "Nhập đường dẫn"
     }
   },
-
   "Not_found": {
     "title": "404",
     "description": "Xin lỗi, trang bạn đang tìm kiếm không tồn tại!",
@@ -142,6 +138,7 @@
     "title": "Tra từ đảo",
     "search": "Tra từ",
     "result": "Kết quả:",
-    "placeholder": "Nhập từ cần tra"
+    "placeholder": "Nhập từ cần tra",
+    "empty": "Không tìm thấy kết quả"
   }
 }
