@@ -9,7 +9,7 @@ import { Inter as FontSans } from "next/font/google";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import "./tree.css";
 
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     description: "Tìm kiếm và khám phá từ đảo, nói lái trong tiếng Việt một cách nhanh chóng và chính xác.",
     images: [
       {
-        url: "/favicon.ico",
+        url: "/image/icon.png",
         width: 32,
         height: 32,
         alt: "Favicon",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     description: "Công cụ giúp bạn tìm kiếm từ đảo trong tiếng Việt dễ dàng.",
     images: [
       {
-        url: "/favicon.ico",
+        url: "/image/icon.png",
         width: 32,
         height: 32,
         alt: "Favicon",
@@ -98,7 +98,7 @@ export default async function RootLayout({ children, params: { locale } }: { chi
             <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
               {children}
               <Analytics />
-              <SpeedInsights/>
+              <SpeedInsights />
             </NextIntlClientProvider>
           </ClientProvider>
         </HydrationProvider>
