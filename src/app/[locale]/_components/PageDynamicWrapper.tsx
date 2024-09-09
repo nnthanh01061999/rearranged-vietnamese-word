@@ -1,11 +1,10 @@
 "use client";
-import BaseLoading from "@/components/skeleton/BaseLoading";
+import PageSkeleton from "@/app/[locale]/_components/PageSkeleton";
 import dynamic from "next/dynamic";
-import React from "react";
 
 const Page = dynamic(() => import("./Page"), {
   ssr: false,
-  loading: () => <BaseLoading />,
+  loading: () => <PageSkeleton />,
 });
 
 const PageDynamicWrapper = () => {
