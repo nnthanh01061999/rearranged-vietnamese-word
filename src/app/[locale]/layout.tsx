@@ -9,6 +9,7 @@ import { Inter as FontSans } from "next/font/google";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css";
 import "./tree.css";
 
@@ -97,6 +98,7 @@ export default async function RootLayout({ children, params: { locale } }: { chi
             <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
               {children}
               <Analytics />
+              <SpeedInsights/>
             </NextIntlClientProvider>
           </ClientProvider>
         </HydrationProvider>
