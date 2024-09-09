@@ -2,10 +2,11 @@ const Schema = () => {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "Tìm kiếm từ đảo tiếng Việt",
+    name: "Tra từ đảo",
     url: "https://yourwebsite.com",
-    description: "Công cụ tìm kiếm từ đảo tiếng Việt nhanh chóng và chính xác.",
-    applicationCategory: "Tiện ích",
+    description: "Công cụ tìm kiếm, tra cứu từ đảo trong tiếng Việt.",
+    applicationCategory: "Utility",
+    operatingSystem: "Web",
   };
 
   return (
