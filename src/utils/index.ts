@@ -6,3 +6,4 @@ export * from "@/utils/clamp";
 export * from "@/utils/formatter";
 export * from "@/utils/history";
 export * from "@/utils/permutations";
+export * from "@/utils/api";

@@ -229,8 +229,7 @@ export const getSimilarUniqueWord = (words: string[]): string[] => {
   const destructWords = words.map((word) => destructWord(word));
   const similarWordStruct = getAllStructWordSimilar(destructWords);
   const newWords = similarWordStruct.map((word) => structWord(word));
-  const uniqueNewWords = arrayUnique(newWords) as string[];
-  return uniqueNewWords;
+  return arrayUnique(newWords) as string[];
 };
 
 export const checkValidStruct = (originalWord: string, validWordStruct: WordStruct[], words: string[]) => {

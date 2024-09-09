@@ -1,9 +1,9 @@
-import { noteApiKey } from "@/data/api-key/note";
+import { permutationApiKey } from "./permutation";
 import { authApiKey } from "./auth";
 
 export const API_KEY = {
   ...authApiKey,
-  ...noteApiKey,
+  ...permutationApiKey,
 } satisfies Record<string, PathWithOptionalColon>;
 
 export type PathWithOptionalColon = `${string}:${string}/${string}` | `${string}/${string}`;

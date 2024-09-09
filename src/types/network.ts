@@ -1,8 +1,6 @@
 export interface IMainResponse<T> {
   code: number;
-  reason: string;
   message: string;
-  metadata: any;
   data: T;
 }
 
@@ -29,3 +27,6 @@ export interface IPaginationParams {
 export interface IItemIds {
   item_ids: number[];
 }
+
+export type IApiResponse<T> = IMainResponse<IDataSource<T>>;
+export type IApiDetailResponse<T> = IMainResponse<T>;

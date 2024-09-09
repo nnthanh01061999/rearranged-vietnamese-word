@@ -15,7 +15,7 @@ export const formatUrl = (originalPath: string, params: Record<string, any>) => 
 };
 
 export const getBeURL = <Key extends ApiKey>(path: Key, params?: Params<Key>) => {
-  const basePath = process.env.NEXT_PUBLIC_API_URL + API_KEY[path];
+  const basePath = (process.env.NEXT_PUBLIC_API_URL || "") + API_KEY[path];
   return params ? formatUrl(basePath, params) : basePath;
 };
 
