@@ -20,20 +20,19 @@ const fontSans = FontSans({
 const APP_NAME = "Tra từ đảo";
 const APP_DEFAULT_TITLE = "Tra từ đảo";
 const APP_TITLE_TEMPLATE = "%s - Tra từ đảo";
-const APP_DESCRIPTION = "Tra từ đảo!";
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,
   title: {
-    default: APP_DEFAULT_TITLE,
-    template: APP_TITLE_TEMPLATE,
+    default: "Tìm kiếm, tra cứu từ đảo tiếng Việt | " + APP_DEFAULT_TITLE,
+    template: "%s - " + APP_TITLE_TEMPLATE,
   },
-  description: APP_DESCRIPTION,
+  description: "Công cụ tìm kiếm, tra cứu từ đảo trong tiếng Việt. Khám phá các từ nói lái và các hoán vị từ trong tiếng Việt.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: APP_DEFAULT_TITLE,
+    title: "Tìm kiếm, tra cứu từ đảo tiếng Việt | " + APP_DEFAULT_TITLE,
   },
   formatDetection: {
     telephone: false,
@@ -42,18 +41,34 @@ export const metadata: Metadata = {
     type: "website",
     siteName: APP_NAME,
     title: {
-      default: APP_DEFAULT_TITLE,
-      template: APP_TITLE_TEMPLATE,
+      default: "Tìm kiếm, tra cứu từ đảo tiếng Việt | " + APP_DEFAULT_TITLE,
+      template: "%s - " + APP_TITLE_TEMPLATE,
     },
-    description: APP_DESCRIPTION,
+    description: "Tìm kiếm và khám phá từ đảo, nói lái trong tiếng Việt một cách nhanh chóng và chính xác.",
+    images: [
+      {
+        url: "/favicon.ico",
+        width: 32,
+        height: 32,
+        alt: "Favicon",
+      },
+    ],
   },
   twitter: {
     card: "summary",
     title: {
-      default: APP_DEFAULT_TITLE,
-      template: APP_TITLE_TEMPLATE,
+      default: "Tìm kiếm, tra cứu từ đảo tiếng Việt | " + APP_DEFAULT_TITLE,
+      template: "%s - " + APP_TITLE_TEMPLATE,
     },
-    description: APP_DESCRIPTION,
+    description: "Công cụ giúp bạn tìm kiếm từ đảo trong tiếng Việt dễ dàng.",
+    images: [
+      {
+        url: "/favicon.ico",
+        width: 32,
+        height: 32,
+        alt: "Favicon",
+      },
+    ],
   },
 };
 
