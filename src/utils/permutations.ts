@@ -119,12 +119,13 @@ const getStructSetSimilar = (destructWord: WordStruct[]) => {
     const initialConsonants = initialConsonantSimilarMap[cur.initialConsonant] || [];
     const vowels = vowelSimilarMap[cur.vowel] || [];
     const finalConsonants = finalConsonantSimilarMap[cur.finalConsonant] || [];
+    const tones = toneSimilarMap[cur.tone] || [];
 
     return {
       initialConsonants: [...prev.initialConsonants, cur.initialConsonant, ...initialConsonants],
       vowels: [...prev.vowels, cur.vowel, ...vowels],
       finalConsonants: [...prev.finalConsonants, cur.finalConsonant, ...finalConsonants],
-      tones: [...prev.tones, cur.tone],
+      tones: [...prev.tones, cur.tone, ...tones],
       tonePositions: [...prev.tonePositions, cur.tonePosition],
     };
   }, initStructSet);
@@ -269,7 +270,6 @@ export const checkValidWord = (originalWord: string, validWordStruct: WordStruct
     let vowels = cloneStruct.vowels;
     let finalConsonants = cloneStruct.finalConsonants;
     let tones = cloneStruct.tones;
-    let tonePositions = cloneStruct.tonePositions;
     if (word === originalWord) return false;
 
     const words = word?.split(" ");
@@ -370,7 +370,7 @@ export const vowelSimilarMap = {
   ai: ["ay", "âi"],
   ay: ["ai", "ây"],
   ây: ["ai", "ay"],
-  ao: ["au", "âu"],
+  ao: ["au"],
   au: ["ao", "âu"],
   âu: ["ao", "au"],
   êu: ["iêu", "iu", "yêu"],
@@ -405,4 +405,9 @@ export const finalConsonantSimilarMap = {
   ng: ["n", "nh"],
   nh: ["n", "ng"],
   ch: ["t", "c"],
+} as Record<string, string[]>;
+
+export const toneSimilarMap = {
+  nga: ["hoi"],
+  hoi: ["nga"],
 } as Record<string, string[]>;
