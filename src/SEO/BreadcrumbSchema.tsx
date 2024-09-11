@@ -12,12 +12,16 @@ const BreadcrumbSchema = ({ keyword }: TBreadcrumbSchemaProps) => {
         name: "Tra từ đảo",
         item: "https://www.tratudao.online/vi",
       },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: keyword,
-        item: `https://www.tratudao.online/vi?keyword=${keyword}`,
-      },
+      ...(keyword
+        ? [
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: keyword,
+              item: `https://www.tratudao.online/vi?keyword=${keyword}`,
+            },
+          ]
+        : []),
     ],
   };
 
