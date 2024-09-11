@@ -7,6 +7,11 @@ const Schema = () => {
     description: "Công cụ tìm kiếm, tra cứu từ đảo trong tiếng Việt.",
     applicationCategory: "Utility",
     operatingSystem: "Web",
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.5",
+      reviewCount: "10",
+    },
   };
 
   return (

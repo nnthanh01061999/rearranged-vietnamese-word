@@ -25,15 +25,17 @@ const APP_TITLE_TEMPLATE = "%s - Tra từ đảo";
 export const metadata: Metadata = {
   applicationName: APP_NAME,
   title: {
-    default: "Tìm kiếm, tra cứu từ đảo tiếng Việt | " + APP_DEFAULT_TITLE,
+    default: "Tìm kiếm, tra cứu từ đảo - từ lái tiếng Việt | " + APP_DEFAULT_TITLE,
     template: "%s - " + APP_TITLE_TEMPLATE,
   },
-  description: "Công cụ tìm kiếm, tra cứu từ đảo trong tiếng Việt. Khám phá các từ nói lái và các hoán vị từ trong tiếng Việt.",
+  description: "Công cụ tìm kiếm, tra cứu từ đảo, từ lái tiếng Việt. Khám phá các từ nói lái và các hoán vị từ trong tiếng Việt.",
+  keywords: "Tra từ đảo, đảo từ, lái từ, từ lái, chạy âm, hoán vị",
+  robots: "index, follow",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Tìm kiếm, tra cứu từ đảo tiếng Việt | " + APP_DEFAULT_TITLE,
+    title: "Tìm kiếm, tra cứu từ đảo - từ lái tiếng Việt | " + APP_DEFAULT_TITLE,
   },
   formatDetection: {
     telephone: false,
@@ -42,7 +44,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: APP_NAME,
     title: {
-      default: "Tìm kiếm, tra cứu từ đảo tiếng Việt | " + APP_DEFAULT_TITLE,
+      default: "Tìm kiếm, tra cứu từ đảo - từ lái tiếng Việt | " + APP_DEFAULT_TITLE,
       template: "%s - " + APP_TITLE_TEMPLATE,
     },
     description: "Tìm kiếm và khám phá từ đảo, nói lái trong tiếng Việt một cách nhanh chóng và chính xác.",
@@ -51,25 +53,16 @@ export const metadata: Metadata = {
         url: "/image/icon.png",
         width: 32,
         height: 32,
-        alt: "Favicon",
       },
     ],
   },
   twitter: {
     card: "summary",
     title: {
-      default: "Tìm kiếm, tra cứu từ đảo tiếng Việt | " + APP_DEFAULT_TITLE,
+      default: "Tìm kiếm, tra cứu từ đảo - từ lái tiếng Việt | " + APP_DEFAULT_TITLE,
       template: "%s - " + APP_TITLE_TEMPLATE,
     },
     description: "Công cụ giúp bạn tìm kiếm từ đảo trong tiếng Việt dễ dàng.",
-    images: [
-      {
-        url: "/image/icon.png",
-        width: 32,
-        height: 32,
-        alt: "Favicon",
-      },
-    ],
   },
 };
 

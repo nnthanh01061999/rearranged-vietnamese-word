@@ -55,7 +55,9 @@ export default function Home() {
           <form onSubmit={forms.handleSubmit(onSubmit)}>
             <Card>
               <CardHeader className="gap-4">
-                <CardTitle className="text-center">{t("title")}</CardTitle>
+                <CardTitle className="text-center">
+                  <h1 className="text-2xl">{t("title")}</h1>
+                </CardTitle>
                 <div className="flex w-full gap-2">
                   <FormInput
                     name="keyword"
