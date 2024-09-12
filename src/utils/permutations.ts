@@ -60,10 +60,7 @@ export function destructWord(word: string) {
   for (let char of wordLowerCase) {
     if (punctuation.test(char)) {
       result.punctuation += char;
-    } else if (
-      !result.vowel &&
-      (!result.initialConsonant || initialComposeConsonants?.[result.initialConsonant[result.initialConsonant.length - 1]]?.includes(char) || initialConsonants.includes(char))
-    ) {
+    } else if (!result.vowel && (initialComposeConsonants?.[result.initialConsonant[result.initialConsonant.length - 1]]?.includes(char) || initialConsonants.includes(char))) {
       result.initialConsonant += char;
     } else if (vowelToneMap?.[char]) {
       result.vowel += vowelToneMap?.[char]?.char;
