@@ -10,14 +10,26 @@ export function middleware(request: NextRequest) {
   const handleI18nRouting = createMiddleware({
     locales: ["vi", "en"],
     defaultLocale: "vi",
-    localeDetection: false,
+    localeDetection: true,
+    pathnames: {
+      "/": "/",
+    },
+    localePrefix: "never",
   });
 
   return handleI18nRouting(request);
 }
 
 export const config = {
-  // Skip all paths that should not be internationalized. This example skips
-  // certain folders and all pathnames with a dot (e.g. favicon.ico)
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  matcher: [
+    "/",
+
+    // Set a cookie to remember the previous locale for
+    // all requests that have a locale prefix
+    "/(vi|en)/:path*",
+
+    // Enable redirects that add missing locales
+    // (e.g. `/pathnames` -> `/en/pathnames`)
+    "/((?!api|_next|_vercel|monitoring|.*\\..*).*)",
+  ],
 };
